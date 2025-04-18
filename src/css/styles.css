@@ -7,12 +7,128 @@
 /* Common styles */
 @import url('./reset.css');
 @import url('./base.css');
-@import url('./container.css');
-@import url('./animations.css');
 
-/* Sections style */
-@import url('./header.css');
-@import url('./vite-promo.css');
-@import url('./badges.css');
-@import url('./back-link.css');
-@import url('./footer.css');
+
+
+body {
+  font-family: Arial, sans-serif;
+  padding: 30px;
+  background-color: #f8f8f8;
+  margin: 0;
+}
+
+/* Стили для формы поиска */
+.form {
+ margin-left: auto;
+ margin-right: auto;
+}
+
+.form input {
+  padding: 10px 15px;
+  font-size: 16px;
+  border: 1px solid #808080;
+  border-radius: 4px 0 0 4px;
+  outline: none;
+  border-radius: 5px;
+}
+
+.form input:hover{
+  border-color: #000000;
+}
+
+.form button {
+  padding: 10px 15px;
+  background-color: #4E75FF;
+  border: none;
+  color: white;
+  font-size: 16px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.form button:hover {
+  background-color: #6C8CFF;
+}
+
+/* Стили для галереи */
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px;
+  padding: 0;
+  margin: 40px auto;
+  max-width: 1200px; /* центрируем и ограничиваем ширину */
+}
+
+.gallery-item {
+  width: calc((100% - 48px) / 3); /* 3 элемента с двумя промежутками по 24px */
+  border: 1px solid #808080;
+  background-color: white;
+  box-sizing: border-box;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+.info {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 12px;
+  border-top: 1px solid #e4e4e4;
+  background-color: #fff;
+  font-size: 12px;
+  color: #2e2f42;
+}
+
+.info p {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+}
+
+.info p b {
+  font-size: 12px;
+  font-weight: 600;
+  color: #2e2f42;
+  margin-bottom: 4px;
+}
+
+.info p::after {
+  content: attr(data-value);
+  font-weight: 700;
+  font-size: 14px;
+  color: #000;
+}
+/* Loader */
+.loader {
+  width: 64px;
+  height: 64px;
+  border: 8px solid #ccc;
+  border-top-color: #4c4cff;
+  border-radius: 50%;
+  animation: spin 1s infinite linear;
+  margin: 30px auto;
+}
+
+.hidden {
+  display: none;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+};
+
