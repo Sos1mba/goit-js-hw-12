@@ -3,23 +3,31 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const galleryContainer = document.querySelector('.gallery');
 const loader = document.querySelector('.loader');
+const loadMoreBtn = document.querySelector('.load-more');
 
-let lightbox = new SimpleLightbox('.gallery a');
+const lightbox = new SimpleLightbox('.gallery a', {
+  captionsData: 'alt',
+  captionDelay: 250,
+});
 
 export function createGallery(images) {
-  const markup = images.map(({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => `
+  const markup = images
+    .map(
+      ({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => `
     <li class="gallery-item">
       <a href="${largeImageURL}">
-        <img src="${webformatURL}" alt="${tags}" />
+        <img src="${webformatURL}" alt="${tags}" loading="lazy" />
       </a>
-      <div class="info">
-        <p><b>Likes:</b> ${likes}</p>
-        <p><b>Views:</b> ${views}</p>
-        <p><b>Comments:</b> ${comments}</p>
-        <p><b>Downloads:</b> ${downloads}</p>
+      <div class="gallery-info">
+        <p class="gallery-info-item"><b>Likes:</b> ${likes}</p>
+        <p class="gallery-info-item"><b>Views:</b> ${views}</p>
+        <p class="gallery-info-item"><b>Comments:</b> ${comments}</p>
+        <p class="gallery-info-item"><b>Downloads:</b> ${downloads}</p>
       </div>
     </li>
-  `).join('');
+  `
+    )
+    .join('');
 
   galleryContainer.insertAdjacentHTML('beforeend', markup);
   lightbox.refresh();
@@ -35,4 +43,12 @@ export function showLoader() {
 
 export function hideLoader() {
   loader.classList.add('hidden');
+}
+
+export function showLoadMoreButton() {
+  loadMoreBtn.classList.remove('hidden');
+}
+
+export function hideLoadMoreButton() {
+  loadMoreBtn.classList.add('hidden');
 }

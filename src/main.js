@@ -1,58 +1,95 @@
-import { getImagesByQuery } from './js/pixabay-api.js';
-import { createGallery, clearGallery, showLoader, hideLoader } from './js/render-functions.js';
+import { getImagesByQuery } from './js/pixabay-api';
+import {
+  createGallery,
+  clearGallery,
+  showLoader,
+  hideLoader,
+  showLoadMoreButton,
+  hideLoadMoreButton,
+} from './js/render-functions';
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 
 const form = document.querySelector('.form');
-const searchInput = form.querySelector('input[name="search-text"]');
+const gallery = document.querySelector('.gallery');
+const loadMoreBtn = document.querySelector('.load-more');
+const loader = document.querySelector('.loader');
 
-form.addEventListener('submit', async (event) => {
-  event.preventDefault();
+let currentPage = 1;
+let currentQuery = '';
+let totalHits = 0;
 
-  const query = searchInput.value.trim();
-  if (!query) {
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const searchInput = form.elements['search-text'].value.trim();
+
+  if (!searchInput) {
     iziToast.warning({
-      title: "Sorry, there are no images matching your search query. Please, try again!",
-      titleColor: "#FAFAFB",
-      backgroundColor: '#B51B1B',
-    messageColor: '#EF4040',
-    iconUrl: './img/Group.svg',
-    iconColor: '#ffffff',
-    position: 'topRight',
-    timeout: 5000,
+      title: 'Warning',
+      message: 'Please enter a search query.',
     });
     return;
   }
 
+  currentQuery = searchInput;
+  currentPage = 1;
   clearGallery();
+  hideLoadMoreButton();
   showLoader();
 
   try {
-    const data = await getImagesByQuery(query);
+    const data = await getImagesByQuery(currentQuery, currentPage);
+    totalHits = data.totalHits;
+
     if (data.hits.length === 0) {
       iziToast.info({
-        title: 'No Results',
-        message: 'No images found for your search.',
-        titleColor: "#FAFAFB",
-        backgroundColor: '#B51B1B',
-      messageColor: '#EF4040',
-      iconColor: '#ffffff',
-      position: 'topRight',
-      timeout: 5000,
+        title: 'Info',
+        message: 'No images found. Please try a different query.',
       });
-    } else {
-      createGallery(data.hits);
+      return;
+    }
+
+    createGallery(data.hits);
+    if (totalHits > 15) {
+      showLoadMoreButton();
     }
   } catch (error) {
     iziToast.error({
       title: 'Error',
-      message: 'Something went wrong!',
-      titleColor: "#FAFAFB",
-      backgroundColor: '#B51B1B',
-     messageColor: '#EF4040',
-    iconColor: '#ffffff',
-     position: 'topRight',
-     timeout: 5000,
+      message: 'An error occurred while fetching images.',
+    });
+  } finally {
+    hideLoader();
+  }
+});
+
+loadMoreBtn.addEventListener('click', async () => {
+  currentPage += 1;
+  showLoader();
+
+  try {
+    const data = await getImagesByQuery(currentQuery, currentPage);
+    createGallery(data.hits);
+
+    const totalPages = Math.ceil(totalHits / 15);
+    if (currentPage >= totalPages) {
+      hideLoadMoreButton();
+      iziToast.info({
+        title: 'Info',
+        message: "We're sorry, but you've reached the end of search results.",
+      });
+    }
+
+    // Плавне прокручування сторінки
+    const { height: cardHeight } = gallery.firstElementChild.getBoundingClientRect();
+    window.scrollBy({
+      top: cardHeight * 2,
+      behavior: 'smooth',
+    });
+  } catch (error) {
+    iziToast.error({
+      title: 'Error',
+      message: 'An error occurred while fetching images.',
     });
   } finally {
     hideLoader();
